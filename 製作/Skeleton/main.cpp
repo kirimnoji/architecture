@@ -14,7 +14,7 @@ void Draw(Vector2 pos);
 
 int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int)
 {
-	SetWindowText(L"1916001_èHéRóT_Test");
+	SetWindowText(L"1916001_èHéRóT");
 	SetDrawScreen(DX_SCREEN_BACK);
 	SetGraphMode(500, 500, 32);
 	ChangeWindowMode(true);
