@@ -53,6 +53,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int)
 
 		ScreenFlip();
 	}
+
 	DxLib_End();
 	return 0;
 }
@@ -63,5 +64,4 @@ void Draw(Vector2 pos)
 
 	DrawString(10, 10, L"HELLO_WORLD", 0xffffff, true);
 	DrawFormatString(10, 30, 0xffffff, L"X : %d Y : %d", pos.x, pos.y, true);
-
 }
