@@ -1,6 +1,8 @@
 
 #include <DxLib.h>
 
+#include "Singleton.h"
+
 static constexpr int SCREEN_SIZE_X = 800;
 static constexpr int SCREEN_SIZE_Y = 800;
 
@@ -52,6 +54,15 @@ int WINAPI WinMain(_In_ HINSTANCE,
 		}
 
 		Draw(pos);
+
+		Singleton& singleton = Singleton::Instanse();
+		singleton.Out();
+		Singleton& singleton2 = Singleton::Instanse();
+		singleton2.Out();
+		singleton2.Out();
+		singleton2.Out();
+		singleton2.Out();
+		singleton2.Out();
 
 		ScreenFlip();
 	}
