@@ -1,6 +1,7 @@
 #include"Geometry.h"
 #include<DxLib.h>
 #include<cmath>
+#include <algorithm>
 
 
 void
@@ -19,24 +20,40 @@ Vector2::operator*=(float scale) {
 	y *= scale;
 }
 
-Vector2
-Vector2::operator*(float scale) {
-	return Vector2(x*scale, y*scale);
+void Vector2::operator/=(float div)
+{
+	x /= div;
+	y /= div;
 }
 
-Vector2 operator+(const Vector2& va, const Vector2 vb) {
-	return Vector2(va.x + vb.x, va.y + vb.y);
+bool 
+Vector2::operator==(const Vector2& vec)const
+{
+	return { x == y };
 }
 
-Vector2 operator-(const Vector2& va, const Vector2 vb){
-	return Vector2(va.x - vb.x, va.y - vb.y);
+Vector2 operator + (const Vector2& lval, const Vector2& rval) {
+	return { lval.x + rval.x,lval.y + rval.y };
+}
+Vector2 operator - (const Vector2& lval, const Vector2& rval) {
+	return { lval.x - rval.x,lval.y - rval.y };
+}
+Vector2 operator * (const Vector2& lval, float scale) {
+	return { lval.x * scale,lval.y * scale };
+}
+Vector2 operator / (const Vector2& lval, float div) {
+	return { lval.x / div,lval.y / div };
 }
 
 float
 Vector2::Magnitude()const {
-	return hypot(x, y);
+	return std:: hypot(x, y);
 }
 
+float
+Vector2::SQMagnitude()const{
+	return x * x + y * y;
+}
 
 void 
 Vector2::Normalize() {
@@ -45,13 +62,17 @@ Vector2::Normalize() {
 	y /= mag;
 }
 
-
 Vector2
-Vector2::Normalized() {
+Vector2::Normalized()const {
 	float mag = Magnitude();
-	return Vector2(x / mag,	y /mag);
+	return { x / mag,	y / mag };
 }
 
+void
+Vector2::Rotate90() {
+	std::swap(x, y);
+	x = -x;
+}
 
 ///ì‡êœÇï‘Ç∑
 float
@@ -88,7 +109,6 @@ Vector2::operator-=(const Vector2& v) {
 	x -= v.x;
 	y -= v.y;
 }
-
 
 //-------Ç±Ç±Ç©ÇÁ3DÇÃÉ^Å[Éì------
 void
