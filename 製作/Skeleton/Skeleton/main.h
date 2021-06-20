@@ -9,6 +9,11 @@ struct Vector2
 	int y;
 };
 
+struct Rect
+{
+	Vector2 center, x, y;
+};
+
 int Init();
 void Draw(Vector2 pos);
 void BoxCtl();
@@ -18,13 +23,16 @@ Vector2 pos = { 100,100 };
 
 Vector2 target;
 Vector2 center;
+
+Rect rcA;
+char KeyState[];
+
 float angle;
 
 int speed;
 
-int frameForAngle;
-
+int frameForAngle = 0;
 
 int mCat;
 int groundH;
-int assetH;
+int assetsH;
