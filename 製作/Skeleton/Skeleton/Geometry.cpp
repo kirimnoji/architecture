@@ -55,11 +55,12 @@ Vector2::SQMagnitude()const{
 	return x * x + y * y;
 }
 
-void 
+Vector2 
 Vector2::Normalize() {
 	float mag = Magnitude();
 	x /= mag;
 	y /= mag;
+	return{ x,y };
 }
 
 Vector2
@@ -72,6 +73,10 @@ void
 Vector2::Rotate90() {
 	std::swap(x, y);
 	x = -x;
+}
+
+Vector2 Vector2::Rotated90() const{
+	return { -y,x };
 }
 
 ///“àÏ‚ğ•Ô‚·

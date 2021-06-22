@@ -3,8 +3,10 @@
 #include <cmath>
 #include <assert.h>
 
-#include "main.h"
+#include "Geometry.h"
 #include "Singleton.h"
+#include "main.h"
+
 
 int WINAPI WinMain(_In_ HINSTANCE, 
 	_In_opt_ HINSTANCE,
@@ -62,7 +64,7 @@ int Init()
 	assetsH = LoadGraph(L"../image/Assets.png", true);
 	assert(assetsH >= 0);
 
-	rcA = { {200,200},50,50 };
+	rcA = { 200,200,50,50 };
 	KeyState[256];
 
 	pos = { 100,100 };
@@ -78,15 +80,51 @@ void tmp()
 	constexpr size_t block_size = 32;
 	const auto count = 1080 / block_size;
 	int x = 0;
-	int y = 500 + 100 * sinf(0.5f * (float)(frameForAngle) * DX_PI_F / 180.f);
-	Vector2 p0{ x,y };
+	int y = 500 /*+ 100 * sinf(0.5f * (float)(frameForAngle) * DX_PI_F / 180.f)*/;
+	Position2 p0( x,y );
+	Position2 lastPos(x, y);
+	Vector2 lastDelta90Vectors[2] = { {0.f,0.f} ,{0.f,0.f} };
 
 	for (int i = 1; i <= count ; ++i)
 	{
+		/*Vector2 deltaVec = { block_size,100 * sinf(0.5f * (float)(nextX + frameForAngle) * DX_PI_F / 180.f) };
+		Position2 nextPos = currentPos + deltaVec;*/
 		auto nextX = block_size * i;
 		auto nextY = 500 + 100 * sinf(0.5f *(float)(nextX + frameForAngle) * DX_PI_F / 180.f);
 		
-		DrawModiGraph(
+		auto p1 = p0;
+		auto deltaVec = Vector2(block_size, block_size * 2.f *
+			sinf(0.5f * (float)(nextX + frameForAngle * i) * DX_PI_F / 180.f));
+		p1 = (p0 + deltaVec.Normalize()) * block_size;
+
+		auto delta90Vec = deltaVec.Rotated90();
+
+		auto middleVecR = delta90Vec;
+		if (!(lastDelta90Vectors[0] == Vector2(0.f, 0.f))) {
+			middleVecR = (middleVecR + lastDelta90Vectors[0]).Normalized();
+		}
+
+		auto middleVecL = delta90Vec;
+		if (!(lastDelta90Vectors[1] == Vector2(0.f, 0.f))) {
+			middleVecL = (lastDelta90Vectors[0] + lastDelta90Vectors[1]).Normalized();
+		}
+		lastDelta90Vectors[0] = lastDelta90Vectors[1];
+		lastDelta90Vectors[1] = lastDelta90Vectors[0];
+
+		auto rightPos = p1 + middleVecR;
+		auto leftPos = p0 + middleVecL;
+		/*auto middlePos = p0 + middleVec;*/
+		DrawRectModiGraph(
+			p0.x, p0.x,
+			p1.x, p1.y,
+			rightPos.x, rightPos.y + block_size,
+			rightPos.x, leftPos.y + block_size,
+			48, 0,
+			16, 16,
+			groundH, true);
+
+
+		/*DrawModiGraph(
 			x, y,
 			nextX, nextY,
 			nextX, nextY + block_size,
@@ -101,30 +139,38 @@ void tmp()
 				x, y + block_size + 100,
 				48,0,
 				16,16,
-				assetsH, true);
+				assetsH, true);*/
 
-		/*// 4辺をラインで表示
-			// 上辺
-			DrawLineAA(
-				x, y,
-				nextX, nextY,
-				0xffffff, 3.0f);
-			// 右辺
-			DrawLineAA(
-				nextX, nextY,
-				nextX, nextY + block_size,
-				0xffffff, 3.0f);
-			// 下辺
-			DrawLineAA(
-				nextX, nextY + block_size,
-				x, y + block_size,
-				0xffffff, 3.0f);
-			// 左辺
-			DrawLineAA(
-				x, y + block_size,
-				x, y,
-				0xffffff, 3.0f);*/
+		/// 4辺をラインで表示
+		/*// 上辺
+		DrawLineAA(
+			x, y,
+			nextX, nextY,
+			0xffffff, 3.0f);
+		
+		// 右辺
+		DrawLineAA(
+			p1.x, p1.y,
+			rightPos.x, rightPos.y + block_size,
+			0xffffff, 3.0f);
+		
+		// 左辺
+		DrawLineAA(
+			p0.x, p0.y + block_size,
+			x, y,
+			0x00ff00, 3.0f);
+		
+		// 左辺
+		DrawLineAA(
+			middlePos.x, middlePos.y + block_size,
+			x, y,
+			0xff0000, 3.0f);*/
 
+		// 下辺
+		/*DrawLineAA(
+			nextX, nextY + block_size,
+			leftPos.x, leftPos.y + block_size,
+			0x0000ff, 3.0f);*/
 		/*DrawLineAA(
 			x, y,
 			nextX, nextY,

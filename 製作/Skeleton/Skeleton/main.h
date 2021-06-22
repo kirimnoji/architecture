@@ -3,17 +3,6 @@
 static constexpr int SCREEN_SIZE_X = 900;
 static constexpr int SCREEN_SIZE_Y = 900;
 
-struct Vector2
-{
-	int x;
-	int y;
-};
-
-struct Rect
-{
-	Vector2 center, x, y;
-};
-
 int Init();
 void Draw(Vector2 pos);
 void BoxCtl();

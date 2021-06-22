@@ -10,7 +10,8 @@ struct Size {
 
 //2D座標・ベクトルを表す構造体
 struct Vector2 {
-	float x, y;
+	int x, y;
+	Vector2(int x, int y) :x((float)x), y((float)y) {};
 	Vector2() :x(0.0f), y(0.0f) {};
 	Vector2(float inx, float iny) :x(inx), y(iny) {};
 
@@ -20,12 +21,13 @@ struct Vector2 {
 	float SQMagnitude()const;
 
 	///正規化(大きさを１に)します
-	void Normalize();
+	Vector2 Normalize();
 
 	///正規化ベクトルを返します
 	Vector2 Normalized()const;
 
 	void Rotate90();
+	Vector2 Rotated90()const;
 
 	void operator += (const Vector2& vec);
 	void operator -= (const Vector2& vec);
