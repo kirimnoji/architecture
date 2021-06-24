@@ -6,7 +6,7 @@ static constexpr int SCREEN_SIZE_Y = 700;
 int Init();
 void Draw(Vector2 pos);
 void BoxCtl();
-void tmp();
+void DrawSinLine();
 
 Vector2 pos = { 100,100 };
 

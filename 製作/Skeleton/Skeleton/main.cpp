@@ -28,7 +28,7 @@ int WINAPI WinMain(_In_ HINSTANCE,
 
 		Draw(pos);
 
-		tmp();
+		DrawSinLine();
 
 		/*Singleton& singleton = Singleton::Instanse();
 		singleton.Out();
@@ -78,16 +78,17 @@ int Init()
 	speed = 5;
 }
 
-void tmp()
+void DrawSinLine()
 {
 	constexpr size_t block_size = 32;
 	const auto count = 720 / block_size;
 	float theta = (float)(frameForAngle)*DX_PI_F / 180.f;
 	int x = 0;
-	int y = 240;
+	int y = 350;
 	Position2 p0(x, y);
 	Position2 lastPos(x, y);
 	Vector2 lastDelta90Vectors[2] = { {0.f,0.f} ,{0.f,0.f} };
+	/*Vector2 lastDeltaVec90 = { 0,0 };*/
 
 	for (int i = 1; i < count ; ++i)
 	{
@@ -99,7 +100,7 @@ void tmp()
 		
 		auto p1 = p0;
 
-		auto deltaVec = Vector2(block_size,50.f *
+		auto deltaVec = Vector2(block_size,40.f *
 			sinf(0.5f * (float)(frameForAngle + block_size * i) * DX_PI_F / 180.f)
 		);
 
@@ -123,14 +124,12 @@ void tmp()
 		auto rightPos = p1 + middleVecR;
 		auto leftPos = p0 + middleVecL;
 		/*auto middlePos = p0 + middleVec;*/
-		DrawRectModiGraph(
+		DrawModiGraph(
 			p0.x, p0.y,
 			p1.x, p1.y,
 			rightPos.x, rightPos.y,
 			leftPos.x, leftPos.y,
-			48, 0,
-			16, 16,
-			assetsH, true);
+			groundH, true);
 
 		/*DrawModiGraph(
 			x, y,
@@ -155,20 +154,43 @@ void tmp()
 			p0.x, p0.y,
 			p1.x, p1.y,
 			0xffffff, 5.f);
+		DrawCircle(p0.x, p0.y,5, 0xffaaaa);
+
+		/*auto lPos = p0 + deltaVec.Rotated90();
+		auto middlePos = lPos;
+		if (!(lastDeltaVec90 == Vector2{ 0,0 })) {
+			auto halfVec = deltaVec.Rotated90() + lastDeltaVec90;
+			middlePos = p0 + halfVec.Rotated90();
+		}
+		lastDeltaVec90 = deltaVec.Normalized();
+		auto rPos = p1 + deltaVec.Rotated90();*/
 		
+
 		// ‰E•Ó
-		DrawLineAA(
+		/*DrawLineAA(
 			p1.x, p1.y,
-			rightPos.x, rightPos.y,
-			0xff0000, 3.0f);
+			rPos.x, rPos.y,
+			0xaaffaa, 3.0f);
 		
 		// ¶•Ó
 		DrawLineAA(
 			p0.x, p0.y,
 			leftPos.x, leftPos.y,
-			0x00ff00, 3.0f);
+			0xaaaaff, 3.0f);
+		// ’†‰›
+		DrawLineAA(
+			p0.x, p0.y,
+			middlePos.x, middlePos.y,
+			0xffaaaa, 3.0f);*/
+
+		/*DrawModiGraph(
+			p0.x, p0.y,
+			p1.x, p1.y,
+			rPos.x, rPos.y,
+			middlePos.x, middlePos.y,
+			groundH, true);*/
 		
-		// ¶•Ó
+		// ’†‰›•Ó
 		/*DrawLineAA(
 			middlePos.x, middlePos.y + block_size,
 			x, y,
@@ -222,10 +244,9 @@ void Draw(Vector2 pos)
 	DrawCircleAA(rcA.center.x, rcA.center.y, 5, 16, 0xff4444);*/
 
 	DrawRotaGraph(center.x, center.y, 1, angle, mCat, true);
-	DrawBox(pos.x, pos.y, pos.x + 100, pos.y + 100, 0xffffff, true);
+	DxLib::DrawBox(pos.x, pos.y, pos.x + 100, pos.y + 100, 0xffffff, true);
 
-	DrawString(10, 10, L"HELLO_WORLD", 0xffffff, true);
-	DrawFormatString(10, 30, 0xffffff, L"X : %d Y : %d", pos.x, pos.y, true);
+	DxLib::DrawString(10, 10, L"HELLO_WORLD", 0xffffff, true);
 }
 
 void BoxCtl()
