@@ -1,5 +1,4 @@
 #include"Geometry.h"
-#include<DxLib.h>
 #include<cmath>
 #include <algorithm>
 
@@ -12,6 +11,17 @@ Rect::Draw() {
 void
 Rect::Draw(Vector2& offset) {
 	DxLib::DrawBox((Left()+offset.x)*2, (Top()+offset.y)*2, (Right()+offset.x)*2, (Bottom()+offset.y)*2, 0xffffffff, false);
+}
+
+void
+Vector2::operator+=(const Vector2& vec) {
+	x += vec.x;
+	y += vec.y;
+}
+void
+Vector2::operator-=(const Vector2& vec) {
+	x -= vec.x;
+	y -= vec.y;
 }
 
 void
@@ -29,20 +39,7 @@ void Vector2::operator/=(float div)
 bool 
 Vector2::operator==(const Vector2& vec)const
 {
-	return { x == y };
-}
-
-Vector2 operator + (const Vector2& lval, const Vector2& rval) {
-	return { lval.x + rval.x,lval.y + rval.y };
-}
-Vector2 operator - (const Vector2& lval, const Vector2& rval) {
-	return { lval.x - rval.x,lval.y - rval.y };
-}
-Vector2 operator * (const Vector2& lval, float scale) {
-	return { lval.x * scale,lval.y * scale };
-}
-Vector2 operator / (const Vector2& lval, float div) {
-	return { lval.x / div,lval.y / div };
+	return x == vec.x && y == vec.y;
 }
 
 float
@@ -55,12 +52,11 @@ Vector2::SQMagnitude()const{
 	return x * x + y * y;
 }
 
-Vector2 
+void 
 Vector2::Normalize() {
 	float mag = Magnitude();
 	x /= mag;
 	y /= mag;
-	return{ x,y };
 }
 
 Vector2
@@ -77,6 +73,19 @@ Vector2::Rotate90() {
 
 Vector2 Vector2::Rotated90() const{
 	return { -y,x };
+}
+
+Vector2 operator + (const Vector2& lval, const Vector2& rval) {
+	return { lval.x + rval.x,lval.y + rval.y };
+}
+Vector2 operator - (const Vector2& lval, const Vector2& rval) {
+	return { lval.x - rval.x,lval.y - rval.y };
+}
+Vector2 operator * (const Vector2& lval, float scale) {
+	return { lval.x * scale,lval.y * scale };
+}
+Vector2 operator / (const Vector2& lval, float div) {
+	return { lval.x / div,lval.y / div };
 }
 
 ///ì‡êœÇï‘Ç∑
@@ -103,17 +112,6 @@ operator%(const Vector2& va, const Vector2& vb) {
 	return Cross(va, vb);
 }
 
-
-void 
-Vector2::operator+=(const Vector2& v) {
-	x += v.x;
-	y += v.y;
-}
-void 
-Vector2::operator-=(const Vector2& v) {
-	x -= v.x;
-	y -= v.y;
-}
 
 //-------Ç±Ç±Ç©ÇÁ3DÇÃÉ^Å[Éì------
 void

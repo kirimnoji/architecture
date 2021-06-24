@@ -1,7 +1,7 @@
 #pragma once
 
 static constexpr int SCREEN_SIZE_X = 900;
-static constexpr int SCREEN_SIZE_Y = 900;
+static constexpr int SCREEN_SIZE_Y = 700;
 
 int Init();
 void Draw(Vector2 pos);
@@ -20,7 +20,7 @@ float angle;
 
 int speed;
 
-int frameForAngle = 0;
+int frameForAngle;
 
 int mCat;
 int groundH;

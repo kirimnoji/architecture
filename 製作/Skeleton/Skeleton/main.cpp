@@ -19,9 +19,10 @@ int WINAPI WinMain(_In_ HINSTANCE,
 	{
 		ClearDrawScreen();
 
-		GetMousePoint(&target.x, &target.y);
+		int mx, my;
+		GetMousePoint(&mx, &my);
 
-		angle = atan2(target.y - center.y, target.x - center.x);
+		angle = atan2(my - center.y, mx - center.x);
 
 		BoxCtl();
 
@@ -72,57 +73,64 @@ int Init()
 	center = { 320,240 };
 	angle = 0;
 
+	frameForAngle = 0;
+
 	speed = 5;
 }
 
 void tmp()
 {
 	constexpr size_t block_size = 32;
-	const auto count = 1080 / block_size;
+	const auto count = 720 / block_size;
+	float theta = (float)(frameForAngle)*DX_PI_F / 180.f;
 	int x = 0;
-	int y = 500 /*+ 100 * sinf(0.5f * (float)(frameForAngle) * DX_PI_F / 180.f)*/;
-	Position2 p0( x,y );
+	int y = 240;
+	Position2 p0(x, y);
 	Position2 lastPos(x, y);
 	Vector2 lastDelta90Vectors[2] = { {0.f,0.f} ,{0.f,0.f} };
 
-	for (int i = 1; i <= count ; ++i)
+	for (int i = 1; i < count ; ++i)
 	{
+		theta += 0.1f;
 		/*Vector2 deltaVec = { block_size,100 * sinf(0.5f * (float)(nextX + frameForAngle) * DX_PI_F / 180.f) };
 		Position2 nextPos = currentPos + deltaVec;*/
-		auto nextX = block_size * i;
-		auto nextY = 500 + 100 * sinf(0.5f *(float)(nextX + frameForAngle) * DX_PI_F / 180.f);
+		/*auto nextX = block_size * i;
+		auto nextY = 500 + 100 * sinf(0.5f *(float)(nextX + frameForAngle) * DX_PI_F / 180.f);*/
 		
 		auto p1 = p0;
-		auto deltaVec = Vector2(block_size, block_size * 2.f *
-			sinf(0.5f * (float)(nextX + frameForAngle * i) * DX_PI_F / 180.f));
-		p1 = (p0 + deltaVec.Normalize()) * block_size;
+
+		auto deltaVec = Vector2(block_size,50.f *
+			sinf(0.5f * (float)(frameForAngle + block_size * i) * DX_PI_F / 180.f)
+		);
+
+		deltaVec = deltaVec.Normalized() * block_size;
+		p1 = p0 + deltaVec;
 
 		auto delta90Vec = deltaVec.Rotated90();
 
 		auto middleVecR = delta90Vec;
 		if (!(lastDelta90Vectors[0] == Vector2(0.f, 0.f))) {
-			middleVecR = (middleVecR + lastDelta90Vectors[0]).Normalized();
+			middleVecR = (middleVecR + lastDelta90Vectors[0]).Normalized()* block_size;
 		}
 
-		auto middleVecL = delta90Vec;
+		auto middleVecL = lastDelta90Vectors[0];
 		if (!(lastDelta90Vectors[1] == Vector2(0.f, 0.f))) {
-			middleVecL = (lastDelta90Vectors[0] + lastDelta90Vectors[1]).Normalized();
+			middleVecL = (lastDelta90Vectors[0] + lastDelta90Vectors[1]).Normalized() * block_size;
 		}
-		lastDelta90Vectors[0] = lastDelta90Vectors[1];
 		lastDelta90Vectors[1] = lastDelta90Vectors[0];
+		lastDelta90Vectors[0] = deltaVec.Rotated90();
 
 		auto rightPos = p1 + middleVecR;
 		auto leftPos = p0 + middleVecL;
 		/*auto middlePos = p0 + middleVec;*/
 		DrawRectModiGraph(
-			p0.x, p0.x,
+			p0.x, p0.y,
 			p1.x, p1.y,
-			rightPos.x, rightPos.y + block_size,
-			rightPos.x, leftPos.y + block_size,
+			rightPos.x, rightPos.y,
+			leftPos.x, leftPos.y,
 			48, 0,
 			16, 16,
-			groundH, true);
-
+			assetsH, true);
 
 		/*DrawModiGraph(
 			x, y,
@@ -142,26 +150,26 @@ void tmp()
 				assetsH, true);*/
 
 		/// 4•Ó‚ðƒ‰ƒCƒ“‚Å•\Ž¦
-		/*// ã•Ó
+		// ã•Ó
 		DrawLineAA(
-			x, y,
-			nextX, nextY,
-			0xffffff, 3.0f);
+			p0.x, p0.y,
+			p1.x, p1.y,
+			0xffffff, 5.f);
 		
 		// ‰E•Ó
 		DrawLineAA(
 			p1.x, p1.y,
-			rightPos.x, rightPos.y + block_size,
-			0xffffff, 3.0f);
+			rightPos.x, rightPos.y,
+			0xff0000, 3.0f);
 		
 		// ¶•Ó
 		DrawLineAA(
-			p0.x, p0.y + block_size,
-			x, y,
+			p0.x, p0.y,
+			leftPos.x, leftPos.y,
 			0x00ff00, 3.0f);
 		
 		// ¶•Ó
-		DrawLineAA(
+		/*DrawLineAA(
 			middlePos.x, middlePos.y + block_size,
 			x, y,
 			0xff0000, 3.0f);*/
@@ -177,8 +185,9 @@ void tmp()
 			0xffffff,
 			3.f);*/
 
-		x = nextX;
-		y = nextY;
+		//x = nextX;
+		//y = nextY;
+		p0 = p1;
 	}
 	frameForAngle = (frameForAngle + 1) % 720;
 }

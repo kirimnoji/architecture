@@ -10,10 +10,15 @@ struct Size {
 
 //2D座標・ベクトルを表す構造体
 struct Vector2 {
-	int x, y;
-	Vector2(int x, int y) :x((float)x), y((float)y) {};
+	float x, y;
 	Vector2() :x(0.0f), y(0.0f) {};
 	Vector2(float inx, float iny) :x(inx), y(iny) {};
+
+	void operator += (const Vector2& vec);
+	void operator -= (const Vector2& vec);
+	void operator *= (float scale);
+	void operator /= (float div);
+	bool operator ==(const Vector2& vec)const;
 
 	///ベクトルの大きさを返します
 	float Magnitude()const;
@@ -21,19 +26,13 @@ struct Vector2 {
 	float SQMagnitude()const;
 
 	///正規化(大きさを１に)します
-	Vector2 Normalize();
+	void Normalize();
 
 	///正規化ベクトルを返します
 	Vector2 Normalized()const;
 
 	void Rotate90();
 	Vector2 Rotated90()const;
-
-	void operator += (const Vector2& vec);
-	void operator -= (const Vector2& vec);
-	void operator *= (float scale);
-	void operator /= (float div);
-	bool operator ==(const Vector2& vec)const;
 
 	Vector2 operator*(float scale) {
 		return { x * scale, y * scale };
@@ -61,7 +60,7 @@ float operator%(const Vector2& va, const Vector2& vb);
 
 //とりあえず「座標」って意味だとベクタより
 //Positionのほうがよくね？って理由でこの名前
-typedef Vector2 Position2;
+using Position2 = Vector2;
 
 //3D座標・ベクトルを表す構造体
 struct Vector3 {
