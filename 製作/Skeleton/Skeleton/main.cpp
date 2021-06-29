@@ -100,7 +100,7 @@ void DrawSinLine()
 		
 		auto p1 = p0;
 
-		auto deltaVec = Vector2(block_size,40.f *
+		auto deltaVec = Vector2(block_size,50.f *
 			sinf(0.5f * (float)(frameForAngle + block_size * i) * DX_PI_F / 180.f)
 		);
 
@@ -110,26 +110,43 @@ void DrawSinLine()
 		auto delta90Vec = deltaVec.Rotated90();
 
 		auto middleVecR = delta90Vec;
+		auto middleVecL = delta90Vec;
 		if (!(lastDelta90Vectors[0] == Vector2(0.f, 0.f))) {
 			middleVecR = (middleVecR + lastDelta90Vectors[0]).Normalized()* block_size;
+			middleVecL = lastDelta90Vectors[0];
 		}
-
-		auto middleVecL = lastDelta90Vectors[0];
 		if (!(lastDelta90Vectors[1] == Vector2(0.f, 0.f))) {
 			middleVecL = (lastDelta90Vectors[0] + lastDelta90Vectors[1]).Normalized() * block_size;
 		}
 		lastDelta90Vectors[1] = lastDelta90Vectors[0];
 		lastDelta90Vectors[0] = deltaVec.Rotated90();
 
-		auto rightPos = p1 + middleVecR;
-		auto leftPos = p0 + middleVecL;
+		auto rightPos = p0 + middleVecR;
+		auto leftPos = lastPos + middleVecL;
 		/*auto middlePos = p0 + middleVec;*/
-		DrawModiGraph(
-			p0.x, p0.y,
-			p1.x, p1.y,
-			rightPos.x, rightPos.y,
-			leftPos.x, leftPos.y,
-			groundH, true);
+		if (i == count)
+		{
+			auto rightPos = p0 + middleVecR;
+			auto leftPos = p1 + delta90Vec;
+			DrawModiGraph(
+				lastPos.x, lastPos.y,
+				p0.x, p0.y,
+				rightPos.x, rightPos.y,
+				leftPos.x, leftPos.y,
+				groundH, true);
+		}
+		else
+		{
+			leftPos = p0 + middleVecR;
+			auto rightPos2 = p1 + delta90Vec;
+			DrawModiGraph(
+				p0.x, p0.y,
+				p1.x, p1.y,
+				rightPos2.x, rightPos2.y,
+				leftPos.x, leftPos.y,
+				groundH, true);
+		}
+
 
 		/*DrawModiGraph(
 			x, y,
@@ -210,6 +227,7 @@ void DrawSinLine()
 		//x = nextX;
 		//y = nextY;
 		p0 = p1;
+		lastPos = p0;
 	}
 	frameForAngle = (frameForAngle + 1) % 720;
 }
