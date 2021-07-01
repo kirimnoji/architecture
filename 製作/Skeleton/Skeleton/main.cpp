@@ -49,7 +49,6 @@ int WINAPI WinMain(_In_ HINSTANCE,
 int Init()
 {
 	SetWindowText(L"1916001_秋山裕");
-	SetDrawScreen(DX_SCREEN_BACK);
 	SetGraphMode(SCREEN_SIZE_X, SCREEN_SIZE_Y, 32);
 	ChangeWindowMode(true);
 
@@ -58,12 +57,19 @@ int Init()
 		return -1;
 	}
 
+	SetDrawScreen(DX_SCREEN_BACK);
+
 	mCat = LoadGraph(L"../image/arrowcat.png", true);
+	assert(mCat >= 0);
+
 	groundH = LoadGraph(L"../img/ground.png", true);
 	assert(groundH >= 0);
 
 	assetsH = LoadGraph(L"../image/Assets.png", true);
 	assert(assetsH >= 0);
+
+	arrowH = LoadGraph(L"../img/arrow2.png", true);
+	assert(arrowH >= 0);
 
 	rcA = { 200,200,50,50 };
 	KeyState[256];
@@ -81,7 +87,13 @@ int Init()
 void DrawSinLine()
 {
 	constexpr size_t block_size = 32;
-	const auto count = 720 / block_size;
+	const int width = 1000;
+	const auto count = width / block_size;
+
+	int imageWidth, imageHight;
+	GetGraphSize(arrowH, &imageWidth, &imageHight);
+	float weight = (float)imageWidth / (float)width;
+
 	float theta = (float)(frameForAngle)*DX_PI_F / 180.f;
 	int x = 0;
 	int y = 350;
@@ -90,7 +102,7 @@ void DrawSinLine()
 	Vector2 lastDelta90Vectors[2] = { {0.f,0.f} ,{0.f,0.f} };
 	/*Vector2 lastDeltaVec90 = { 0,0 };*/
 
-	for (int i = 1; i < count ; ++i)
+	for (int i = 1; i <= count ; ++i)
 	{
 		theta += 0.1f;
 		/*Vector2 deltaVec = { block_size,100 * sinf(0.5f * (float)(nextX + frameForAngle) * DX_PI_F / 180.f) };
@@ -121,32 +133,63 @@ void DrawSinLine()
 		lastDelta90Vectors[1] = lastDelta90Vectors[0];
 		lastDelta90Vectors[0] = deltaVec.Rotated90();
 
-		auto rightPos = p0 + middleVecR;
 		auto leftPos = lastPos + middleVecL;
+		auto rightPos = p0 + middleVecR;
 		/*auto middlePos = p0 + middleVec;*/
 		if (i == count)
 		{
-			auto rightPos = p0 + middleVecR;
-			auto leftPos = p1 + delta90Vec;
-			DrawModiGraph(
-				lastPos.x, lastPos.y,
-				p0.x, p0.y,
-				rightPos.x, rightPos.y,
-				leftPos.x, leftPos.y,
-				groundH, true);
-		}
-		else
-		{
+			/*auto rightPos = p0 + middleVecR;
+			auto leftPos = p1 + delta90Vec;*/
+
+			DrawRectModiGraph(
+				lastPos.x, lastPos.y,// 左上
+				p0.x, p0.y,// 右上
+				rightPos.x, rightPos.y,// 左下
+				leftPos.x, leftPos.y,// 右下
+				(i - 1) * block_size * weight,0,// 画像切り抜き左上
+				block_size,64,// 画像切り抜き幅、高さ
+				arrowH, true);
+
+			//DrawLineAA(// 左
+			//	lastPos.x, lastPos.y,
+			//	leftPos.x, leftPos.y,
+			//	0xffffff, 3.f);
+			//DrawCircle(p0.x, p0.y, 5, 0xffaaaa);
+
 			leftPos = p0 + middleVecR;
 			auto rightPos2 = p1 + delta90Vec;
-			DrawModiGraph(
+			DrawRectModiGraph(
 				p0.x, p0.y,
 				p1.x, p1.y,
 				rightPos2.x, rightPos2.y,
 				leftPos.x, leftPos.y,
-				groundH, true);
+				i * block_size * weight, 0,// 画像切り抜き左上
+				block_size, 64,// 画像切り抜き幅、高さ
+				arrowH, true);
+		}
+		else
+		{
+			DrawRectModiGraph(
+				lastPos.x, lastPos.y,
+				p0.x, p0.y,
+				rightPos.x, rightPos.y,
+				leftPos.x, leftPos.y,
+				(i - 1) * block_size * weight, 0,// 画像切り抜き左上
+				block_size, 64,// 画像切り抜き幅、高さ
+				arrowH, true);
+
+			//DrawLineAA(// 右
+			//	p0.x, p0.y,
+			//	rightPos.x, rightPos.y,
+			//	0xffffff, 3.f);
 		}
 
+		// 上辺
+		/*DrawLineAA(
+			p0.x, p0.y,
+			p1.x, p1.y,
+			0xffffff, 5.f);
+		DrawCircle(p0.x, p0.y, 5, 0xffaaaa);*/
 
 		/*DrawModiGraph(
 			x, y,
@@ -164,14 +207,6 @@ void DrawSinLine()
 				48,0,
 				16,16,
 				assetsH, true);*/
-
-		/// 4辺をラインで表示
-		// 上辺
-		DrawLineAA(
-			p0.x, p0.y,
-			p1.x, p1.y,
-			0xffffff, 5.f);
-		DrawCircle(p0.x, p0.y,5, 0xffaaaa);
 
 		/*auto lPos = p0 + deltaVec.Rotated90();
 		auto middlePos = lPos;
@@ -226,8 +261,8 @@ void DrawSinLine()
 
 		//x = nextX;
 		//y = nextY;
-		p0 = p1;
 		lastPos = p0;
+		p0 = p1;
 	}
 	frameForAngle = (frameForAngle + 1) % 720;
 }

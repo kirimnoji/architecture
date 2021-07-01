@@ -25,3 +25,4 @@ int frameForAngle;
 int mCat;
 int groundH;
 int assetsH;
+int arrowH;
