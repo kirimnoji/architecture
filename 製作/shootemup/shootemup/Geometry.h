@@ -14,6 +14,8 @@ struct Vector2 {
 	float x, y;
 	///ベクトルの大きさを返します
 	float Magnitude()const;
+
+	float SQMagnitude()const;
 	
 	///正規化(大きさを１に)します
 	void Normalize();
@@ -21,9 +23,14 @@ struct Vector2 {
 	///正規化ベクトルを返します
 	Vector2 Normalized();
 
+	void Rotate90();
+	Vector2 Rotated90()const;
+
 	void operator+=(const Vector2& v);
 	void operator-=(const Vector2& v);
 	void operator*=(float scale);
+	void operator/=(float div);
+
 	Vector2 operator*(float scale);
 	Vector2 operator-() {
 		return Vector2(-x, -y);
@@ -32,6 +39,8 @@ struct Vector2 {
 
 Vector2 operator+(const Vector2& va, const Vector2 vb);
 Vector2 operator-(const Vector2& va, const Vector2 vb);
+Vector2 operator * (const Vector2& lval, float scale);
+Vector2 operator / (const Vector2& lval, float div);
 
 ///内積を返す
 float Dot(const Vector2& va, const Vector2& vb);

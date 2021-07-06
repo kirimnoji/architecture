@@ -1,5 +1,6 @@
 #include<DxLib.h>
 #include<cmath>
+#include <memory>
 #include"Geometry.h"
 
 ///当たり判定関数
@@ -11,6 +12,8 @@ bool IsHit(const Position2& posA, float radiusA, const Position2& posB,  float r
 	//当たり判定を実装してください
 	return false;
 }
+
+using namespace std;
 
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	ChangeWindowMode(true);
@@ -54,7 +57,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	unsigned int frame = 0;//フレーム管理用
 
-	char keystate[256];
+	char keystate[256] = {};
+	char lastKeystate[256] = {};
 	bool isDebugMode = false;
 	int skyy = 0;
 	int skyy2 = 0;
@@ -97,6 +101,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		if (isDebugMode) {
 			//自機の本体(当たり判定)
 			DrawCircle(playerpos.x, playerpos.y, playerRadius, 0xffaaaa, false, 3);
+		}
+
+		if (keystate[KEY_INPUT_Z] && !lastKeystate[KEY_INPUT_Z])
+		{
+
 		}
 
 		//弾発射
@@ -152,6 +161,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		}
 		++frame;
 		ScreenFlip();
+		copy(begin(keystate),
+			end(keystate),
+			begin(lastKeystate));
 	}
 
 	DxLib_End();
