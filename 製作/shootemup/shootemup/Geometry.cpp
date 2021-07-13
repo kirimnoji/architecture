@@ -6,12 +6,12 @@
 
 void
 Rect::Draw() {
-	DxLib::DrawBox(Left()*2, Top()*2, Right()*2, Bottom()*2, 0xffffffff, false);
+	DxLib::DrawBox((int)Left()*2, (int)Top()*2, (int)Right()*2, (int)Bottom()*2, 0xffffffff, false);
 }
 
 void
 Rect::Draw(Vector2& offset) {
-	DxLib::DrawBox((Left()+offset.x)*2, (Top()+offset.y)*2, (Right()+offset.x)*2, (Bottom()+offset.y)*2, 0xffffffff, false);
+	DxLib::DrawBox((int)(Left() + offset.x) * 2, (int)(Top() + offset.y) * 2, (int)(Right() + offset.x) * 2, (int)(Bottom() + offset.y) * 2, 0xffffffff, false);
 }
 
 Vector2

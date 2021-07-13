@@ -1,3 +1,6 @@
+
+#include <vector>
+
 #include<DxLib.h>
 #include<cmath>
 #include <memory>
@@ -10,14 +13,18 @@
 ///@param radiusB B‚Ì”¼Œa
 bool IsHit(const Position2& posA, float radiusA, const Position2& posB,  float radiusB) {
 	//“–‚½‚è”»’è‚ðŽÀ‘•‚µ‚Ä‚­‚¾‚³‚¢
-	return false;
+	return (posA - posB).Magnitude() < (radiusA + radiusB);
 }
 
 using namespace std;
 
-int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
+int WINAPI WinMain(
+	_In_ HINSTANCE,
+	_In_opt_  HINSTANCE,
+	_In_ LPSTR, 
+	_In_ int) {
 	ChangeWindowMode(true);
-	SetMainWindowText("’e–‹‚¾‚æ`");
+	SetMainWindowText("1916001_HŽR—T");
 	if (DxLib_Init() != 0) {
 		return -1;
 	}
@@ -55,14 +62,19 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Position2 enemypos(320,25);//“GÀ•W
 	Position2 playerpos(320, 400);//Ž©‹@À•W
 
+	// Ž©‹@‚Ì’e
+	Bullet shots[8] = {};
+
 	unsigned int frame = 0;//ƒtƒŒ[ƒ€ŠÇ——p
 
 	char keystate[256] = {};
-	char lastKeystate[256] = {};
+	char lastKeyState[256] = {};
 	bool isDebugMode = false;
 	int skyy = 0;
 	int skyy2 = 0;
 	int bgidx = 0;
+	constexpr float player_shot_speed = 8.f;
+
 	while (ProcessMessage() == 0) {
 		ClearDrawScreen();
 
@@ -103,10 +115,62 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			DrawCircle(playerpos.x, playerpos.y, playerRadius, 0xffaaaa, false, 3);
 		}
 
-		if (keystate[KEY_INPUT_Z] && !lastKeystate[KEY_INPUT_Z])
+		if (keystate[KEY_INPUT_Z] && !lastKeyState[KEY_INPUT_Z])
 		{
-
+			for (auto& shot : shots)
+			{
+				if (!shot.isActive)
+				{
+					shot.pos = playerpos;
+					bool isRight = rand() % 2;
+					shot.vel = isRight ? Vector2(5.f, 0.f) : Vector2(-5.f, 0.f);
+					shot.pos += shot.vel;
+					shot.isActive = true;
+					break;
+				}
+			}
 		}
+
+		// ’e‚ÌXVE•`‰æ
+		for (auto& shot : shots)
+		{
+			if (shot.isActive)
+			{
+				// “G‘_‚¢’e‚É‚·‚é
+				constexpr bool isSimple = false;
+				if (isSimple)
+				{
+					shot.vel = shot.vel + (enemypos - shot.pos).Normalized() * 0.5;
+					shot.vel = shot.vel.Normalized() * player_shot_speed;
+				}
+				else
+				{
+					auto nShotVel = shot.vel.Normalized();
+					auto nToEnemyVec = (enemypos - shot.pos).Normalized();
+					float dot = Dot(nShotVel, nToEnemyVec);
+					float c = acos(dot);
+					// ƒ}ƒCƒiƒX‚¾‚Æ‰E‰ñ‚èAƒvƒ‰ƒX‚¾‚Æ¶‰ñ‚è
+					float sross = Cross(nShotVel, nToEnemyVec);
+
+				}
+				
+				shot.pos += shot.vel;
+				DrawCircleAA(shot.pos.x, shot.pos.y,
+					5.f, 16, 0xff0000);
+
+				if (shot.pos.x < -10 || 650 < shot.pos.x ||
+					shot.pos.y < -10 || 490 < shot.pos.y)
+				{
+					shot.isActive = false;
+				}
+				// “G‚É“–‚½‚Á‚Ä‚àÁ‚¦‚é
+				if (IsHit(shot.pos, 16, enemypos, 16))
+				{
+					shot.isActive = false;
+				}
+			}
+		}
+		DrawCircleAA(enemypos.x, enemypos.y, 30.f, 16, 0x0000ff, false, 3.0);
 
 		//’e”­ŽË
 		if (frame % 12 == 0) {
@@ -151,7 +215,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		}
 
 		//“G‚Ì•\Ž¦
-		enemypos.x = abs((int)((frame+320) % 1280) - 640);
+		enemypos.x = (float)abs((int)((frame+320) % 1280) - 640);
 		int eidx = (frame / 4 % 2);
 		DrawRotaGraph(enemypos.x, enemypos.y, 2.0f, 0.0f, enemyH[eidx],true);
 
@@ -161,12 +225,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		}
 		++frame;
 		ScreenFlip();
-		copy(begin(keystate),
-			end(keystate),
-			begin(lastKeystate));
+
+		// std‚Ìbegin‚ÆendA‚»‚ÌŒã‚É”z—ñ‘‚­‚ÆAŠÛ‚²‚ÆƒRƒs[‚Å‚«‚é
+		copy(begin(keystate),end(keystate),begin(lastKeyState));
 	}
 
-	DxLib_End();
+	DxLib::DxLib_End();
 
 	return 0;
 }
