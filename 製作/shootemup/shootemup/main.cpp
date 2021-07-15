@@ -1,10 +1,10 @@
 
 #include <vector>
 
-#include<DxLib.h>
-#include<cmath>
+#include <DxLib.h>
+#include <cmath>
 #include <memory>
-#include"Geometry.h"
+#include "Geometry.h"
 
 ///当たり判定関数
 ///@param posA Aの座標
@@ -75,7 +75,9 @@ int WINAPI WinMain(
 	int bgidx = 0;
 	constexpr float player_shot_speed = 8.f;
 
-	while (ProcessMessage() == 0) {
+	while ((ProcessMessage() == 0) && 
+		(CheckHitKey(KEY_INPUT_ESCAPE) == 0)) 
+	{
 		ClearDrawScreen();
 
 		GetHitKeyStateAll(keystate);
@@ -109,12 +111,13 @@ int WINAPI WinMain(
 		}
 
 		int pidx = (frame/4 % 2)*5+3;
-		DrawRotaGraph(playerpos.x, playerpos.y, 2.0f, 0.0f, playerH[pidx], true);
+		DxLib::DrawRotaGraph(playerpos.x, playerpos.y, 2.0f, 0.0f, playerH[pidx], true);
 		if (isDebugMode) {
 			//自機の本体(当たり判定)
 			DrawCircle(playerpos.x, playerpos.y, playerRadius, 0xffaaaa, false, 3);
 		}
 
+		// 弾発射
 		if (keystate[KEY_INPUT_Z] && !lastKeyState[KEY_INPUT_Z])
 		{
 			for (auto& shot : shots)
@@ -195,7 +198,7 @@ int WINAPI WinMain(
 			float angle = 0.0f;
 			//弾の角度をatan2で計算してください。angleに値を入れるんだよオゥ
 			
-			DrawRotaGraph(b.pos.x, b.pos.y,1.0f,angle, bulletH, true);
+			DxLib::DrawRotaGraph(b.pos.x, b.pos.y,1.0f,angle, bulletH, true);
 			
 			if (isDebugMode) {
 				//弾の本体(当たり判定)
@@ -217,17 +220,17 @@ int WINAPI WinMain(
 		//敵の表示
 		enemypos.x = (float)abs((int)((frame+320) % 1280) - 640);
 		int eidx = (frame / 4 % 2);
-		DrawRotaGraph(enemypos.x, enemypos.y, 2.0f, 0.0f, enemyH[eidx],true);
+		DxLib::DrawRotaGraph(enemypos.x, enemypos.y, 2.0f, 0.0f, enemyH[eidx],true);
 
 		if (isDebugMode) {
 			//敵の本体(当たり判定)
 			DrawCircle(enemypos.x, enemypos.y, 5, 0xffffff, false, 3);
 		}
 		++frame;
-		ScreenFlip();
+		DxLib::ScreenFlip();
 
 		// stdのbeginとend、その後に配列書くと、丸ごとコピーできる
-		copy(begin(keystate),end(keystate),begin(lastKeyState));
+		std::copy(begin(keystate),end(keystate),begin(lastKeyState));
 	}
 
 	DxLib::DxLib_End();
