@@ -154,9 +154,10 @@ int WINAPI WinMain(
 					float c = acos(dot);
 					// マイナスだと右回り、プラスだと左回り
 					float sross = Cross(nShotVel, nToEnemyVec);
-
 				}
 				
+				shot.vel = (shot.vel + (enemypos - shot.pos).Normalized()).Normalized() * player_shot_speed;
+
 				shot.pos += shot.vel;
 				DrawCircleAA(shot.pos.x, shot.pos.y,
 					5.f, 16, 0xff0000);
