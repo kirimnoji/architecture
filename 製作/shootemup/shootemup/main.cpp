@@ -4,7 +4,7 @@
 #include <DxLib.h>
 #include <cmath>
 #include <memory>
-#include "Geometry.h"
+#include "HomingShot.h"
 
 ///“–‚½‚è”»’èŠÖ”
 ///@param posA A‚ÌÀ•W
@@ -44,11 +44,7 @@ int WINAPI WinMain(
 	int enemyH[2];
 	LoadDivGraph("img/enemy.png", 2, 2, 1, 32, 32, enemyH);
 
-	struct Bullet {
-		Position2 pos;//À•W
-		Vector2 vel;//‘¬“x
-		bool isActive = false;//¶‚«‚Ä‚é‚©`H
-	};
+	
 
 	//’e‚Ì”¼Œa
 	float bulletRadius = 5.0f;
@@ -63,7 +59,7 @@ int WINAPI WinMain(
 	Position2 playerpos(320, 400);//Ž©‹@À•W
 
 	// Ž©‹@‚Ì’e
-	Bullet shots[8] = {};
+	HomingShot shots[16] = {};
 
 	unsigned int frame = 0;//ƒtƒŒ[ƒ€ŠÇ——p
 
@@ -120,16 +116,19 @@ int WINAPI WinMain(
 		// ’e”­ŽË
 		if (keystate[KEY_INPUT_Z] && !lastKeyState[KEY_INPUT_Z])
 		{
+			int cnt = 0;
 			for (auto& shot : shots)
 			{
 				if (!shot.isActive)
 				{
-					shot.pos = playerpos;
-					bool isRight = rand() % 2;
-					shot.vel = isRight ? Vector2(5.f, 0.f) : Vector2(-5.f, 0.f);
-					shot.pos += shot.vel;
 					shot.isActive = true;
-					break;
+					shot.pos = playerpos;
+					shot.vel = Vector2({ cnt == 0 ? 1.f : -1.f,1.f }).Normalized() * player_shot_speed;
+					shot.trail.Clear();
+					if (++cnt > 1)
+					{
+						break;
+					}
 				}
 			}
 		}
@@ -137,9 +136,18 @@ int WINAPI WinMain(
 		// ’e‚ÌXVE•`‰æ
 		for (auto& shot : shots)
 		{
-			if (shot.isActive)
+			if (!shot.isActive)continue;
+
+			if (frame % 2 == 0)
 			{
-				// “G‘_‚¢’e‚É‚·‚é
+				shot.trail.Update();
+			}
+			shot.pos += shot.vel;
+			shot.trail.Draw();
+
+			shot.vel = (shot.vel +(enemypos - shot.pos).Normalized()).Normalized() *player_shot_speed;
+
+				//// “G‘_‚¢’e‚É‚·‚é
 				constexpr bool isSimple = false;
 				if (isSimple)
 				{
@@ -156,9 +164,19 @@ int WINAPI WinMain(
 					float sross = Cross(nShotVel, nToEnemyVec);
 				}
 				
-				shot.vel = (shot.vel + (enemypos - shot.pos).Normalized()).Normalized() * player_shot_speed;
+				
 
-				shot.pos += shot.vel;
+				//auto nVelocity = shot.vel.Normalized();
+				//auto nTraget = (enemypos - shot.pos).Normalized();
+				//auto dot = Dot(nVelocity, nTraget); // dot = cosƒÆ
+				//auto cross = Cross(nVelocity, nTraget);
+				//auto angle = acos(dot);	// cosƒÆ‚Í0‚ð’†S‚Éü‘ÎÌ
+				//angle = std::fminf(angle, DX_PI_F / 24.f);
+				//angle = cross >= 0.0f ? angle : -angle;
+				//angle = atan2(nVelocity.y, nVelocity.x) + angle;
+
+				//shot.vel = Vector2(cosf(angle), sinf(angle)) * player_shot_speed;
+		
 				DrawCircleAA(shot.pos.x, shot.pos.y,
 					5.f, 16, 0xff0000);
 
@@ -172,7 +190,6 @@ int WINAPI WinMain(
 				{
 					shot.isActive = false;
 				}
-			}
 		}
 		DrawCircleAA(enemypos.x, enemypos.y, 30.f, 16, 0x0000ff, false, 3.0);
 
