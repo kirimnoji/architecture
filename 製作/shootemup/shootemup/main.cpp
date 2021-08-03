@@ -44,7 +44,8 @@ int WINAPI WinMain(
 	int enemyH[2];
 	LoadDivGraph("img/enemy.png", 2, 2, 1, 32, 32, enemyH);
 
-	
+	//
+	auto arrowH = LoadGraph("img/arrow.png");
 
 	//弾の半径
 	float bulletRadius = 5.0f;
@@ -60,6 +61,10 @@ int WINAPI WinMain(
 
 	// 自機の弾
 	HomingShot shots[16] = {};
+	for (auto& shot : shots)
+	{
+		shot.trail.SetHandle(arrowH);
+	}
 
 	unsigned int frame = 0;//フレーム管理用
 
@@ -91,7 +96,6 @@ int WINAPI WinMain(
 		DrawExtendGraph(0, skyy - 480, 640, skyy, skyH, true);
 		DrawExtendGraph(0, skyy2, 640, skyy2 + 480, sky2H, true);
 		DrawExtendGraph(0, skyy2 - 480, 640, skyy2, sky2H, true);
-
 
 		//プレイヤー
 		if (keystate[KEY_INPUT_RIGHT]) {
@@ -163,28 +167,16 @@ int WINAPI WinMain(
 					// マイナスだと右回り、プラスだと左回り
 					float sross = Cross(nShotVel, nToEnemyVec);
 				}
-				
-				
-
-				//auto nVelocity = shot.vel.Normalized();
-				//auto nTraget = (enemypos - shot.pos).Normalized();
-				//auto dot = Dot(nVelocity, nTraget); // dot = cosθ
-				//auto cross = Cross(nVelocity, nTraget);
-				//auto angle = acos(dot);	// cosθは0を中心に線対称
-				//angle = std::fminf(angle, DX_PI_F / 24.f);
-				//angle = cross >= 0.0f ? angle : -angle;
-				//angle = atan2(nVelocity.y, nVelocity.x) + angle;
-
-				//shot.vel = Vector2(cosf(angle), sinf(angle)) * player_shot_speed;
 		
 				DrawCircleAA(shot.pos.x, shot.pos.y,
 					5.f, 16, 0xff0000);
 
-				if (shot.pos.x < -10 || 650 < shot.pos.x ||
+				// 画面外に弾が出たら消す
+				/*if (shot.pos.x < -10 || 650 < shot.pos.x ||
 					shot.pos.y < -10 || 490 < shot.pos.y)
 				{
 					shot.isActive = false;
-				}
+				}*/
 				// 敵に当たっても消える
 				if (IsHit(shot.pos, 16, enemypos, 16))
 				{
