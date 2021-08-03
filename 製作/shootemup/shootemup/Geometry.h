@@ -31,6 +31,9 @@ struct Vector2 {
 	void operator*=(float scale);
 	void operator/=(float div);
 
+	bool operator == (const Vector2& val);
+	bool operator != (const Vector2& val);
+
 	Vector2 operator*(float scale);
 	Vector2 operator-() {
 		return Vector2(-x, -y);

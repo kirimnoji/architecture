@@ -116,3 +116,13 @@ Vector2::operator/=(float div)
 	x /= div;
 	y /= div;
 }
+
+bool Vector2::operator==(const Vector2& val)
+{
+	return x == val.x && y == val.y;
+}
+
+bool Vector2::operator!=(const Vector2 & val)
+{
+	return x != val.x && y != val.y;
+}

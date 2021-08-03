@@ -111,7 +111,7 @@ int WINAPI WinMain(
 		}
 
 		int pidx = (frame/4 % 2)*5+3;
-		DxLib::DrawRotaGraph(playerpos.x, playerpos.y, 2.0f, 0.0f, playerH[pidx], true);
+		
 		if (isDebugMode) {
 			//Ž©‹@‚Ì–{‘Ì(“–‚½‚è”»’è)
 			DrawCircle(playerpos.x, playerpos.y, playerRadius, 0xffaaaa, false, 3);
@@ -184,6 +184,8 @@ int WINAPI WinMain(
 				}
 		}
 		DrawCircleAA(enemypos.x, enemypos.y, 30.f, 16, 0x0000ff, false, 3.0);
+
+		DxLib::DrawRotaGraph(playerpos.x, playerpos.y, 2.0f, 0.0f, playerH[pidx], true);
 
 		//’e”­ŽË
 		if (frame % 12 == 0) {

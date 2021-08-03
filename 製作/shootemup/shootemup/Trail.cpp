@@ -1,9 +1,10 @@
 #include "Trail.h"
 #include "HomingShot.h"
+#include "Geometry.h"
 
 #include <DxLib.h>
 
-constexpr size_t history_limit = 20;
+constexpr size_t history_limit = 10;
 void Trail::SetHandle(int handle)
 {
 	handle_ = handle;
@@ -32,7 +33,8 @@ void Trail::Draw()	// —š—ð•`‰æ
 	float u = 0.f;
 	for (const auto& pos : history_)
 	{
-		if ((pos.x == lastPos.x) && (pos.y == lastPos.y))continue;
+		/*if (pos == lastPos)continue;*/
+		if ((pos.x == lastPos.x)&&(pos.y == lastPos.y))continue;
 		/*DrawLineAA(lastPos.x, lastPos.y,
 			pos.x, pos.y, 0xffffff, thickness);
 		thickness *= 0.9f;*/
@@ -40,10 +42,10 @@ void Trail::Draw()	// —š—ð•`‰æ
 		auto v = pos - lastPos;
 		v.Magnitude();
 		v = Vector2(-v.y, v.x);
-		auto p1 = lastPos + v * 2;
-		auto p2 = pos + v * 2;
-		auto p3 = pos - v * 2;
-		auto p4 = lastPos - v * 2;
+		auto p1 = lastPos + v;
+		auto p2 = pos + v;
+		auto p3 = pos - v;
+		auto p4 = lastPos - v;
 		DrawRectModiGraph(
 			p1.x, p1.y,
 			p2.x, p2.y,
