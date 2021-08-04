@@ -152,21 +152,21 @@ int WINAPI WinMain(
 			shot.vel = (shot.vel +(enemypos - shot.pos).Normalized()).Normalized() *player_shot_speed;
 
 				//// 敵狙い弾にする
-				constexpr bool isSimple = false;
-				if (isSimple)
-				{
-					shot.vel = shot.vel + (enemypos - shot.pos).Normalized() * 0.5;
-					shot.vel = shot.vel.Normalized() * player_shot_speed;
-				}
-				else
-				{
-					auto nShotVel = shot.vel.Normalized();
-					auto nToEnemyVec = (enemypos - shot.pos).Normalized();
-					float dot = Dot(nShotVel, nToEnemyVec);
-					float c = acos(dot);
-					// マイナスだと右回り、プラスだと左回り
-					float sross = Cross(nShotVel, nToEnemyVec);
-				}
+				//constexpr bool isSimple = false;
+				//if (isSimple)
+				//{
+				//	shot.vel = shot.vel + (enemypos - shot.pos).Normalized() * 0.5;
+				//	shot.vel = shot.vel.Normalized() * player_shot_speed;
+				//}
+				//else
+				//{
+				//	auto nShotVel = shot.vel.Normalized();
+				//	auto nToEnemyVec = (enemypos - shot.pos).Normalized();
+				//	float dot = Dot(nShotVel, nToEnemyVec);
+				//	float c = acos(dot);
+				//	// マイナスだと右回り、プラスだと左回り
+				//	float sross = Cross(nShotVel, nToEnemyVec);
+				//}
 		
 				DrawCircleAA(shot.pos.x, shot.pos.y,
 					5.f, 16, 0xff0000);
